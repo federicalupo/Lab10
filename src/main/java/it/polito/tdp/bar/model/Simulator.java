@@ -1,7 +1,8 @@
 package it.polito.tdp.bar.model;
 
 import java.time.Duration;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
+
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -13,16 +14,30 @@ public class Simulator {
 
 	private PriorityQueue<Event> queue = new PriorityQueue<>();
 	
-	private int totTavoli = 15;
-	private Map<Integer, Integer> tavoli ; //<nposti, ntavoli>
+	private int totTavoli=0;
+	private Map<Integer, Integer> tavoli = new TreeMap<>(); //<nposti, ntavoli>
 	private boolean trovato;
-	private float tolleranzaCostante; //da impostare
+	private final float TOLLERANZACOSTANTE = (float)0.7; //da impostare- si, rivedo
 	
-	//tavoli da settare??? dubbiooooo
+
 	
 	private int nTotClienti;
 	private int nClientiSoddisfatti;
 	private int nClientiInsoddisfatti;
+	
+	//tavoli da settare
+	public void aggiungiTavolo(Integer nPosti, Integer nTavoli) {
+		
+		totTavoli+=nTavoli;  
+		// => per ogni persona che si siede è previsto che se ne vada dopo un pò=> quindi ogni tavolo si libera
+		//funge da variabile di stato
+		
+		if(tavoli.containsKey(nPosti)) { //se c'è già aggiorna nTavoli
+			tavoli.replace(nPosti, tavoli.get(nPosti)+nTavoli);
+		}else {
+			tavoli.put(nPosti, nTavoli);
+		}
+	}
 	
 	public int getnTotClienti() {
 		return nTotClienti;
@@ -35,38 +50,33 @@ public class Simulator {
 	}
 	
 	public void run() {
-		tavoli = new TreeMap<>();
 		
-		this.tolleranzaCostante =(float)0.7;
-		tavoli.put(4, 5);
-		tavoli.put(6, 4);
-		tavoli.put(8, 4);
-		tavoli.put(10, 2);
-	
-		totTavoli = 15;
-		 
 		 nTotClienti = 0;
 		 nClientiSoddisfatti = 0;
 		 nClientiInsoddisfatti = 0;
 		 
-		//devo stabilire comunque una partenza?  dubbioooooo
+		 
 		this.queue.clear(); //pulire struttura dati
 		
-		LocalTime oraArrivo = LocalTime.now();
+		LocalDateTime oraArrivo = LocalDateTime.now(); //NO LOCALTIME !! PErCHè DUE GIORNI DIVERSI, CON STESSA ORA, VENGONO ORDINATI UNO DOPO L'ALTRO PERCHè SI GUARDA SOLO L'ORA
 		
-		for(int i = 0; i<2000; i++) {
+		for(int i = 0; i<30; i++) {
 			
-			oraArrivo = oraArrivo.plus(Duration.of(((long)(Math.random()*10)+1), ChronoUnit.MINUTES));
+			oraArrivo = oraArrivo.plus(Duration.of(((int)(Math.random()*10)+1), ChronoUnit.MINUTES)); // cast in int
+			
 			int nPersone = (int)((Math.random()*10)+1);
-			float tolleranza = (float)Math.random();
+			float tolleranza = (float)Math.random(); //1 è da includere?
 			
 			Event e = new Event(oraArrivo, EventType.ARRIVO_GRUPPO_CLIENTI, nPersone, tolleranza);
+			 
 			queue.add(e);
 		}
 		
 		
 		while( ! queue.isEmpty()) {
 			Event e = queue.poll();
+			//provo a stampare per debug
+			//System.out.println(e); 
 			processEvent(e);
 		}
 		
@@ -99,10 +109,10 @@ public class Simulator {
 							trovato = true;
 							
 							//oraArrivo + permanenza 
-							//dubbioooo?? tra 60 e 120?
+							//Random con estremi inclusi => (random * (max-min+1) )  +  min
 							
 							
-							LocalTime tempoPermanenza = e.getTime().plus(Duration.of((long)((Math.random()*60)+60), ChronoUnit.MINUTES));
+							LocalDateTime tempoPermanenza = e.getTime().plus(Duration.of((int)( (Math.random()*61)  +60), ChronoUnit.MINUTES));
 							Event evento = new Event(tempoPermanenza, EventType.TAVOLO_LIBERATO, nPosti);
 							this.queue.add(evento);
 						}
@@ -111,7 +121,7 @@ public class Simulator {
 					
 					if(!trovato) { //se non è disponibile tavolo della capienza giusta, puoi andare al bancone
 						
-						if(e.getTolleranza() >= this.tolleranzaCostante) { //bancone => capienza illimitata
+						if(e.getTolleranza() >= TOLLERANZACOSTANTE) { //bancone => capienza illimitata
 							this.nTotClienti++;
 							this.nClientiSoddisfatti++;
 						}else {
@@ -123,7 +133,7 @@ public class Simulator {
 					
 				}else {
 					//non c'è tavolo, vuoi sederti al bancone?
-					if(e.getTolleranza() >= this.tolleranzaCostante) {
+					if(e.getTolleranza() >= TOLLERANZACOSTANTE) {
 						this.nTotClienti++;
 						this.nClientiSoddisfatti++;
 					}else {

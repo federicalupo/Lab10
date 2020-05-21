@@ -1,6 +1,7 @@
 package it.polito.tdp.bar.model;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
+
 
 public class Event implements Comparable<Event> {
 
@@ -8,13 +9,13 @@ public class Event implements Comparable<Event> {
 		ARRIVO_GRUPPO_CLIENTI, TAVOLO_LIBERATO
 	}
 	
-	private LocalTime time;
+	private LocalDateTime time;  //LOCALDATETIME PERCHè DEVO CONSIDERARE ANCHE GIORNO
 	private  EventType eventype;
 	private int nPersone;
 	private float tolleranza; //variabile
 	private int chiaveTavoloLiberato;
 	
-	public Event(LocalTime time, EventType eventype, int nPersone, float tolleranza) {
+	public Event(LocalDateTime time, EventType eventype, int nPersone, float tolleranza) {
 		super();
 		this.time = time;
 		this.eventype = eventype;
@@ -22,14 +23,15 @@ public class Event implements Comparable<Event> {
 		
 		this.tolleranza = tolleranza;
 	}
-//dubbio due costruttori??
+
+	//dubbio due costruttori?? si posso
 	/**COSTRUTTORE TAVOLO_LIBERATO
 	 * 
 	 * @param time
 	 * @param eventype
 	 * @param chiaveTavoloLiberato => in modo da aggiornare numero tavoli con quel nPosti
 	 */
-	public Event(LocalTime time, EventType eventype, Integer chiaveTavoloLiberato) {
+	public Event(LocalDateTime time, EventType eventype, Integer chiaveTavoloLiberato) {
 		super();
 		this.time = time;
 		this.eventype = eventype;
@@ -37,11 +39,11 @@ public class Event implements Comparable<Event> {
 		
 	}
 	
-	public LocalTime getTime() {
+	public LocalDateTime getTime() {
 		return time;
 	}
 
-	public void setTime(LocalTime time) {
+	public void setTime(LocalDateTime time) {
 		this.time = time;
 	}
 
@@ -78,6 +80,11 @@ public class Event implements Comparable<Event> {
 	
 	public int getChiaveTavoloLiberato() {
 		return chiaveTavoloLiberato;
+	}
+	@Override
+	public String toString() {
+		return "Event [time=" + time + ", eventype=" + eventype + ", nPersone=" + nPersone + ", tolleranza="
+				+ tolleranza + "]";
 	}
 	
 	

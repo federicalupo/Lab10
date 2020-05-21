@@ -7,10 +7,18 @@ public class Model {
 	public Model () {
 		s = new Simulator();
 		
+		//settare qui
+		s.aggiungiTavolo(4,5);
+		s.aggiungiTavolo(10,2);
+		s.aggiungiTavolo(8,4);
+		s.aggiungiTavolo(6,4);
+		
+		
 	}
 
 	public void simulazione() {
 		s.run();
+		
 	}
 	
 	public int getnTotClienti() {
