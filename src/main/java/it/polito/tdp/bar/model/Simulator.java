@@ -60,7 +60,7 @@ public class Simulator {
 		
 		LocalDateTime oraArrivo = LocalDateTime.now(); //NO LOCALTIME !! PErCHè DUE GIORNI DIVERSI, CON STESSA ORA, VENGONO ORDINATI UNO DOPO L'ALTRO PERCHè SI GUARDA SOLO L'ORA
 		
-		for(int i = 0; i<20; i++) {
+		for(int i = 0; i<2000; i++) {
 			
 			oraArrivo = oraArrivo.plus(Duration.of(((int)(Math.random()*10)+1), ChronoUnit.MINUTES)); // cast in int
 			
@@ -104,8 +104,8 @@ public class Simulator {
 							 * se quel preciso tavolo è presente
 							 * 
 							 */
-							this.nTotClienti++;
-							this.nClientiSoddisfatti++;
+							this.nTotClienti+= e.getnPersone();  //DEVO CONSIDERARE TUTTE LE PERSONE=> 1 GRUPPO != 1CLIENTE
+							this.nClientiSoddisfatti+=e.getnPersone();
 							this.totTavoli--;
 							tavoli.replace(nPosti, tavoli.get(nPosti)-1); //riduce il numero di tavoli con quel nPosti
 							trovato = true;
@@ -124,11 +124,11 @@ public class Simulator {
 					if(!trovato) { //se non è disponibile tavolo della capienza giusta, puoi andare al bancone
 						
 						if(e.getTolleranza() >= TOLLERANZACOSTANTE) { //bancone => capienza illimitata
-							this.nTotClienti++;
-							this.nClientiSoddisfatti++;
+							this.nTotClienti+= e.getnPersone();
+							this.nClientiSoddisfatti+= e.getnPersone();
 						}else {
-							this.nTotClienti++;
-							this.nClientiInsoddisfatti++;
+							this.nTotClienti+=e.getnPersone();
+							this.nClientiInsoddisfatti+=e.getnPersone();
 						}
 					}
 					
@@ -136,11 +136,11 @@ public class Simulator {
 				}else {
 					//non c'è tavolo, vuoi sederti al bancone?
 					if(e.getTolleranza() >= TOLLERANZACOSTANTE) {
-						this.nTotClienti++;
-						this.nClientiSoddisfatti++;
+						this.nTotClienti+= e.getnPersone();
+						this.nClientiSoddisfatti+= e.getnPersone();
 					}else {
-						this.nTotClienti++;
-						this.nClientiInsoddisfatti++;
+						this.nTotClienti+=e.getnPersone();
+						this.nClientiInsoddisfatti+=e.getnPersone();
 					}
 					
 				}
