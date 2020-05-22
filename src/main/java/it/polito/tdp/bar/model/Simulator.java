@@ -60,11 +60,12 @@ public class Simulator {
 		
 		LocalDateTime oraArrivo = LocalDateTime.now(); //NO LOCALTIME !! PErCHè DUE GIORNI DIVERSI, CON STESSA ORA, VENGONO ORDINATI UNO DOPO L'ALTRO PERCHè SI GUARDA SOLO L'ORA
 		
-		for(int i = 0; i<30; i++) {
+		for(int i = 0; i<20; i++) {
 			
 			oraArrivo = oraArrivo.plus(Duration.of(((int)(Math.random()*10)+1), ChronoUnit.MINUTES)); // cast in int
 			
 			int nPersone = (int)((Math.random()*10)+1);
+			System.out.println(nPersone+"\n");
 			float tolleranza = (float)Math.random(); //1 è da includere?
 			
 			Event e = new Event(oraArrivo, EventType.ARRIVO_GRUPPO_CLIENTI, nPersone, tolleranza);
@@ -78,6 +79,7 @@ public class Simulator {
 			//provo a stampare per debug
 			//System.out.println(e); 
 			processEvent(e);
+			System.out.println("Npersone "+e.getnPersone()+"   nPosti: "+tavoli+"\n");
 		}
 		
 		
