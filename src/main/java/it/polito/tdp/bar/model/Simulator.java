@@ -2,7 +2,7 @@ package it.polito.tdp.bar.model;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -18,6 +18,8 @@ public class Simulator {
 	private Map<Integer, Integer> tavoli = new TreeMap<>(); //<nposti, ntavoli>
 	private boolean trovato;
 	private final float TOLLERANZACOSTANTE = (float)0.7; //da impostare- dubbio
+	private final LocalTime oraApertura = LocalTime.of(8, 0);
+	private final LocalTime oraChiusura= LocalTime.of(22, 0);
 	
 
 	private int maxTime =10;  //default
@@ -83,7 +85,8 @@ public class Simulator {
 		 
 		this.queue.clear(); //pulire struttura dati
 		
-		LocalDateTime oraArrivo = LocalDateTime.now(); //NO LOCALTIME !! PErCHè DUE GIORNI DIVERSI, CON STESSA ORA, VENGONO ORDINATI UNO DOPO L'ALTRO PERCHè SI GUARDA SOLO L'ORA
+		/* LocalDateTime oraArrivo = LocalDateTime.now(); //NO LOCALTIME !! PErCHè DUE GIORNI DIVERSI, CON STESSA ORA, VENGONO ORDINATI UNO DOPO L'ALTRO PERCHè SI GUARDA SOLO L'ORA
+		
 		
 		for(int i = 0; i<2000; i++) {
 			
@@ -97,6 +100,23 @@ public class Simulator {
 			 
 			queue.add(e);
 		}
+		*/
+		
+		LocalTime oraArrivo = this.oraApertura;
+		
+		while(oraArrivo.isBefore(oraChiusura)) {
+			
+			int nPersone = (int)((Math.random()*this.maxPersone)+1);
+			float tolleranza = (float)Math.random(); //1 è da includere?
+			
+			Event e = new Event(oraArrivo, EventType.ARRIVO_GRUPPO_CLIENTI, nPersone, tolleranza);
+			 
+			queue.add(e);
+			
+			oraArrivo = oraArrivo.plus(Duration.of(((int)(Math.random()*this.maxTime)+1), ChronoUnit.MINUTES)); // cast in int		
+		}
+		
+		
 		
 		
 		while( ! queue.isEmpty()) {
@@ -104,10 +124,10 @@ public class Simulator {
 			//provo a stampare per debug
 			//System.out.println(e); 
 			processEvent(e);
-			
 		}
-		
 	}
+	
+	
 	private void processEvent(Event e) {
 		
 		switch(e.getEventype()) {
@@ -135,7 +155,7 @@ public class Simulator {
 							//Random con estremi inclusi => (random * (max-min+1) )  +  min
 							int range = (this.maxDurata-this.minDurata)+1;
 							
-							LocalDateTime tempoPermanenza = e.getTime().plus(Duration.of((int)( (Math.random()*range)+ this.minDurata), ChronoUnit.MINUTES));
+							LocalTime tempoPermanenza = e.getTime().plus(Duration.of((int)( (Math.random()*range)+ this.minDurata), ChronoUnit.MINUTES));
 							Event evento = new Event(tempoPermanenza, EventType.TAVOLO_LIBERATO, nPosti);
 							this.queue.add(evento);
 						}
