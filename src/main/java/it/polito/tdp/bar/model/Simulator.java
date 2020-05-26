@@ -17,7 +17,7 @@ public class Simulator {
 	private int totTavoli=0;
 	private Map<Integer, Integer> tavoli = new TreeMap<>(); //<nposti, ntavoli>
 	private boolean trovato;
-	private final float TOLLERANZACOSTANTE = (float)0.7; //da impostare- si, rivedo
+	private final float TOLLERANZACOSTANTE = (float)0.7; //da impostare- dubbio
 	
 
 	private int maxTime =10;  //default
