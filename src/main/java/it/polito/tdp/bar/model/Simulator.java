@@ -20,6 +20,10 @@ public class Simulator {
 	private final float TOLLERANZACOSTANTE = (float)0.7; //da impostare- si, rivedo
 	
 
+	private int maxTime =10;  //default
+	private int maxPersone = 10;
+	private int minDurata= 60;
+	private int maxDurata= 120;
 	
 	private int nTotClienti;
 	private int nClientiSoddisfatti;
@@ -39,9 +43,30 @@ public class Simulator {
 		}
 	}
 	
+	//settare opzionale
+	
+	public void setMaxTime(int maxTime) {
+		this.maxTime = maxTime;
+	}
+
+	public void setMaxPersone(int maxPersone) {
+		this.maxPersone = maxPersone;
+	}
+
+	public void setMinDurata(int minDurata) {
+		this.minDurata = minDurata;
+	}
+
+	public void setMaxDurata(int maxDurata) {
+		this.maxDurata = maxDurata;
+	}
+	
+	
+	//statistiche
 	public int getnTotClienti() {
 		return nTotClienti;
 	}
+
 	public int getnClientiSoddisfatti() {
 		return nClientiSoddisfatti;
 	}
@@ -62,10 +87,10 @@ public class Simulator {
 		
 		for(int i = 0; i<2000; i++) {
 			
-			oraArrivo = oraArrivo.plus(Duration.of(((int)(Math.random()*10)+1), ChronoUnit.MINUTES)); // cast in int
+			oraArrivo = oraArrivo.plus(Duration.of(((int)(Math.random()*this.maxTime)+1), ChronoUnit.MINUTES)); // cast in int
 			
-			int nPersone = (int)((Math.random()*10)+1);
-			System.out.println(nPersone+"\n");
+			int nPersone = (int)((Math.random()*this.maxPersone)+1);
+			
 			float tolleranza = (float)Math.random(); //1 è da includere?
 			
 			Event e = new Event(oraArrivo, EventType.ARRIVO_GRUPPO_CLIENTI, nPersone, tolleranza);
@@ -79,12 +104,8 @@ public class Simulator {
 			//provo a stampare per debug
 			//System.out.println(e); 
 			processEvent(e);
-			System.out.println("Npersone "+e.getnPersone()+"   nPosti: "+tavoli+"\n");
+			
 		}
-		
-		
-		
-		
 		
 	}
 	private void processEvent(Event e) {
@@ -112,9 +133,9 @@ public class Simulator {
 							
 							//oraArrivo + permanenza 
 							//Random con estremi inclusi => (random * (max-min+1) )  +  min
+							int range = (this.maxDurata-this.minDurata)+1;
 							
-							
-							LocalDateTime tempoPermanenza = e.getTime().plus(Duration.of((int)( (Math.random()*61)  +60), ChronoUnit.MINUTES));
+							LocalDateTime tempoPermanenza = e.getTime().plus(Duration.of((int)( (Math.random()*range)+ this.minDurata), ChronoUnit.MINUTES));
 							Event evento = new Event(tempoPermanenza, EventType.TAVOLO_LIBERATO, nPosti);
 							this.queue.add(evento);
 						}

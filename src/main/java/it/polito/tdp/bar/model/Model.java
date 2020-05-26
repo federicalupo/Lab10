@@ -13,7 +13,8 @@ public class Model {
 		s.aggiungiTavolo(8,4);
 		s.aggiungiTavolo(6,4);
 		
-		
+		//impostare range => opzionale
+		s.setMaxDurata(120);
 	}
 
 	public void simulazione() {
